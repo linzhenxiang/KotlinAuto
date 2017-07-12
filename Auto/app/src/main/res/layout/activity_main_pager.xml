@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+    skin:xxx:background
+    skin:xxx:src (only for ImageView)
+    skin:xxx:selector
+    skin:xxx:vector
+    skin:xxx:textColor (ColorStateList or Color)
+    skin:xxx:switch (only for switch)
+    skin:xxx:divider (for ListView or LinearLayout)
+ -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.auto.widget.Banner
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
+    </com.auto.widget.Banner>
+    <com.auto.widget.OverlapImageView
+        android:layout_gravity="bottom"
+        android:scaleType="centerCrop"
+        android:layout_width="120dp"
+        android:src="@drawable/gfa"
+        android:layout_height="72dp" />
+</FrameLayout>
