@@ -6,7 +6,8 @@ import android.os.Parcelable
 /**
  * Banner shu
  */
-data class BData(var parcel: Parcel?) : Parcelable {
+data class BData(var parcel: Parcel?) : Parcelable, Banner.BrData {
+
 
     var url: String? = null
     var title: String? = null
@@ -39,5 +40,17 @@ data class BData(var parcel: Parcel?) : Parcelable {
 
     override fun describeContents(): Int = 0
 
+
+    override fun getBrUrl(): String? {
+        return url
+    }
+
+    override fun getBrTitle(): String? {
+        return title
+    }
+
+    override fun getBrSuTitle(): String? {
+        return sub_title
+    }
 
 }

@@ -1,10 +1,12 @@
 package com.auto.widget
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -16,77 +18,97 @@ import org.jetbrains.anko.uiThread
 /**
  * Created by lzx on 2017/7/11 0011.
  */
-class Banner : FrameLayout {
+class Banner : FrameLayout, ViewPager.OnPageChangeListener {
 
+    var mOldPosition = 0
+    var mPagerMargin: Int = -1
     var mViewPager: ViewPager? = null
-    var list = mutableListOf<ImageView>()
-    var oldPosition = 0
-    var mData = mutableListOf<BData>()
+    var mBrList = mutableListOf<BrData>()
+    var mViews = mutableListOf<ImageView>()
+    var mPageTransformer: ViewPager.PageTransformer? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        initViews()
-    }
-
-    fun initViews() {
         mViewPager = ViewPager(context)
-        mViewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    var position = mViewPager?.currentItem
-                    oldPosition = mViewPager?.currentItem ?: 0
-
-                    Log.e("EE", "_____A  position:$position?SCROLL_STATE_IDLE")
-                }
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                Log.e("EE", "_____B  position:$position?positionOffset:$positionOffset:item:${mViewPager?.currentItem}+$oldPosition")
-
-                if (position > oldPosition) {
-                    if (position == list.size - 1) {
-                        mViewPager?.setCurrentItem(1, false)
-                    } else if (position == 0) {
-                        mViewPager?.setCurrentItem(list.size - 2, false)
-                    }
-                }
-                oldPosition = position
-
-            }
-
-            override fun onPageSelected(position: Int) {
-                Log.e("EE", "_____onPageSelected:$position?SCROLL_STATE_IDLE")
-
-            }
-
-        })
+        mViewPager?.addOnPageChangeListener(this)
         addView(mViewPager, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
 
-    fun setDataList(data: List<BData>) {
+    override fun onPageScrollStateChanged(state: Int) {
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+            mOldPosition = mViewPager!!.currentItem
+            if (mOldPosition == 0) mViewPager!!.setCurrentItem(mViews.size - 2, false)
+        }
+    }
+
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        if (position > mOldPosition && Math.abs(position - mOldPosition) == 1) {
+            if (position == mViews.size - 1) {
+                mViewPager?.setCurrentItem(1, false)
+            } else if (position == 0) {
+                mViewPager?.setCurrentItem(mViews.size - 2, false)
+            }
+        } else if (position < mOldPosition) {
+            if (position == 0) {
+                mViewPager?.setCurrentItem(mViews.size - 1, false)
+            }
+        }
+        mOldPosition = position
+
+    }
+
+    override fun onPageSelected(position: Int) {
+
+    }
+
+
+    override fun dispatchDraw(canvas: Canvas?) {
+        super.dispatchDraw(canvas)
+        var paint = Paint()
+        paint.color = Color.RED
+        canvas?.drawCircle(10.0f,10.0f,10.0f,paint)
+
+    }
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+    }
+
+    /**
+     * 添加数据
+     */
+    fun setDataList(data: List<BrData>) {
         doAsync {
             data.forEachIndexed { index, _ ->
-                list.add(ImageView(context))
+                mViews.add(ImageView(context))
                 if (index == data.size - 1) {
-                    list.add(ImageView(context))
-                    list.add(0, ImageView(context))
+                    mViews.add(ImageView(context))
+                    mViews.add(0, ImageView(context))
                 }
             }
-            mData.addAll(data)
-            mData.add(data[0])
-            mData.add(0, data[data.size - 1])
+            mBrList.addAll(data)
+            mBrList.add(data[0])
+            mBrList.add(0, data[data.size - 1])
             uiThread {
-                mViewPager?.currentItem = list.size - 2
-                mViewPager?.offscreenPageLimit = list.size
-                mViewPager?.adapter = BannerAdapter(list, mData)
+                mViewPager?.offscreenPageLimit = mViews.size
+                if (mPagerMargin > 0) mViewPager?.pageMargin = mPagerMargin
+                if (mPageTransformer != null) mViewPager?.setPageTransformer(true, mPageTransformer)
+                mViewPager?.adapter = BannerAdapter(mViews, mBrList)
+                mViewPager?.currentItem = 1
             }
         }
     }
 
 
-    internal class BannerAdapter(var list: MutableList<ImageView>, val data: List<BData>) : PagerAdapter() {
+
+
+
+    /**
+     * ViewPager 适配器
+     */
+    internal class BannerAdapter(var list: MutableList<ImageView>, val data: List<BrData>) : PagerAdapter() {
 
 
         override fun getCount(): Int {
@@ -102,7 +124,7 @@ class Banner : FrameLayout {
         }
 
         override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-            GlideHelp.load(container?.context, data[position].url, list!![position])
+            GlideHelp.load(container?.context, data[position].getBrUrl(), list!![position])
             container?.addView(list[position])
             return list[position]
         }
@@ -110,5 +132,14 @@ class Banner : FrameLayout {
 
     }
 
+
+    /**
+     * Banner 数据对象,需要实现此接口
+     */
+    interface BrData {
+        fun getBrUrl(): String?
+        fun getBrTitle(): String?
+        fun getBrSuTitle(): String?
+    }
 
 }
