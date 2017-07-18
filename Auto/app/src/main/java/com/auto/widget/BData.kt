@@ -2,6 +2,7 @@ package com.auto.widget
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.auto.widget.banner.Banner
 
 /**
  * Banner shu

@@ -15,11 +15,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.auto.widget.Banner
+    <com.auto.widget.banner.Banner
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="160dp">
-    </com.auto.widget.Banner>
+    </com.auto.widget.banner.Banner>
     <com.auto.widget.OverlapImageView
         android:layout_gravity="center"
         android:scaleType="centerCrop"

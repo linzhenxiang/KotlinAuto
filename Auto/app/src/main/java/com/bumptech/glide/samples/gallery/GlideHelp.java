@@ -12,6 +12,6 @@ import com.auto.R;
 public class GlideHelp {
     public static void load(Context context, String url, ImageView view){
 //        view.setImageResource(R.mipmap.ic_launcher);
-        GlideApp.with(context).asDrawable().load(url).centerCrop().skipMemoryCache(true).into(view);
+        GlideApp.with(context).asBitmap().load(url).centerCrop().dontAnimate().into(view);
     }
 }

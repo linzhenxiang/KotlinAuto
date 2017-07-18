@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.widget.ImageView
 
 /**
- * Created by Administrator on 2017/7/12 0012.
+ * 文件夹图片
  */
 class OverlapImageView : ImageView {
     var paint = Paint()
