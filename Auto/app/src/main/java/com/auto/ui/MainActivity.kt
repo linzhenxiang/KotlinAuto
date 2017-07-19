@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import com.auto.R
+import com.auto.bean.AutoBean
+import com.auto.bean.AutoItem
 import kotlinx.android.synthetic.main.auto_main_activity.*
 
 /**
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     fun initView() {
         viewPager.adapter = MainPagerAdapter(supportFragmentManager)
     }
+
 
 
     internal class MainPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

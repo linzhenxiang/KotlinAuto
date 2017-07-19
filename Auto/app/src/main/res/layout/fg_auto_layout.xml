@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+    skin:xxx:background
+    skin:xxx:src (only for ImageView)
+    skin:xxx:selector
+    skin:xxx:vector
+    skin:xxx:textColor (ColorStateList or Color)
+    skin:xxx:switch (only for switch)
+    skin:xxx:divider (for ListView or LinearLayout)
+ -->
+
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+</android.support.v7.widget.RecyclerView>
