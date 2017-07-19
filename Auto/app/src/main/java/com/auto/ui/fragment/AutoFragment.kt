@@ -2,6 +2,8 @@ package com.auto.ui.fragment
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +11,16 @@ import android.view.ViewGroup
 import com.auto.R
 import com.auto.bean.AutoBean
 import com.auto.bean.AutoItem
+import com.auto.widget.banner.Banner
+import kotlinx.android.synthetic.main.fg_auto_item_banner_layout.view.*
+import kotlinx.android.synthetic.main.fg_auto_layout.*
 
 /**
  * Created by Administrator on 2017/7/19 0019.
  */
 class AutoFragment : Fragment() {
+
+    private var adapter: AutoAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater!!.inflate(R.layout.fg_auto_layout, container, false)
@@ -21,8 +28,11 @@ class AutoFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        adapter = AutoAdapter()
+        recycler.itemAnimator = DefaultItemAnimator()
+        recycler.layoutManager = GridLayoutManager(view!!.context, 3, GridLayoutManager.VERTICAL, false)
+        recycler.adapter = adapter
+        initData()
     }
 
 
@@ -53,6 +63,7 @@ class AutoFragment : Fragment() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
         }
 
         override fun getItemCount(): Int {
@@ -71,16 +82,20 @@ class AutoFragment : Fragment() {
 
 
         class BannerHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+            fun setData(bean: AutoBean) {
+                itemView.banner.setDataList(bean.data as List<Banner.BrData>)
+            }
         }
 
     }
 
     fun RecyclerView.ViewHolder.setData(bean: AutoBean) {
-        
+
     }
 
 
-    fun initData(): List<AutoItem> {
+    fun initData(): List<AutoBean> {
         var data = listOf<AutoItem>()
         (1..5).forEach {
             var item = AutoItem()
@@ -93,7 +108,7 @@ class AutoFragment : Fragment() {
                 bean.play_num = 4534
                 bean.su_title = ""
                 bean.title = "奔驰 E级 2016款 E 300 L 自动 豪华型-精品车况,支持检测,按揭"
-                bean.type = 1
+                bean.type = 3
                 list + bean
             }
             item.type = it //banner
@@ -101,6 +116,26 @@ class AutoFragment : Fragment() {
             item.data = list
             data + item
         }
-        return data
+        var list = listOf<AutoBean>()
+        data.forEach {
+            var bean = AutoBean()
+            when (it.type) {
+                1 -> {
+                    bean.data = it.data
+                    bean.type = it.type
+                    list + bean
+                }
+                2 -> {
+                    //标题
+                    var tBean = AutoBean()
+                    tBean.type = 2
+                    tBean.title = it.title
+                    list + tBean
+                    list + it.data!!
+                }
+            }
+        }
+        adapter?.setList(list)
+        return list
     }
 }
